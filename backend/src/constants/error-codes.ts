@@ -5,6 +5,8 @@ export const AppErrorCodes = {
   EMAIL_INVALID:"EMAIL_INVALID",
   PASSWORD_INVALID:"PASSWORD_INVALID",
   SESSION_EXPIRED:"SESSION_EXPIRED",
+  INTERNAL_SERVER_ERROR:"INTERNAL_SERVER_ERROR",
+  INVALID_INPUT:"INVALID_INPUT"
 } as const;
 
 export type AppErrorCodesType = typeof AppErrorCodes[keyof typeof AppErrorCodes];

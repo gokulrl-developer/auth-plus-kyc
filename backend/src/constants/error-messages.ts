@@ -10,7 +10,9 @@ export const ErrorMessages={
   USER_BLOCKED:"Your account is currently in inactive status.",
   EMAIL_INVALID:"Email is absent or in invalid format.",
   PASSWORD_INVALID:"Password is in invalid format.Password must contain at least 8 characters and should contain at lease one lowercase,uppercase,special character and number",
-  SESSION_EXPIRED:"Your current session expired.Please login to continue."
+  SESSION_EXPIRED:"Your current session expired.Please login to continue.",
+  INTERNAL_SERVER_ERROR:"Internal server error",
+  INVALID_INPUT:"Invalid input",
 }as const;
 
 export type ErrorMessagesType=typeof ErrorMessages[ keyof typeof ErrorMessages]

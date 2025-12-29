@@ -24,9 +24,8 @@ export function useApiErrorHandler(setUser?: AuthContextType["setUser"],removeLo
         }
 
         console.error("API Error:", status, error.response.data);
-
         if (
-          status === 401 
+          status === 401
         ) {
           if(setUser && removeLocalStorageUser){
           removeLocalStorageUser();

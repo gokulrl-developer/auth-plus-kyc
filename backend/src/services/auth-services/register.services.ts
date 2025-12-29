@@ -1,7 +1,7 @@
 import { AppErrorCodes } from "../../constants/error-codes";
 import { ErrorMessages } from "../../constants/error-messages";
 import { RegexExpressions } from "../../constants/regex-expressions";
-import { IUser, User } from "../../models/user.mode";
+import { IUser, User } from "../../models/user.model";
 import { RegisterInput } from "../../types/auth.types";
 import AppError from "../../utils/app-error";
 import { hashPassword } from "../../utils/password-encryption";

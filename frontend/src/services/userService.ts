@@ -1,5 +1,6 @@
 import { Routes } from "../constants/routes";
 import { ILoginPayload, ILoginResponse, ILogoutResponse, IRegisterPayload, IRegisterResponse } from "../types/auth.types";
+import { GetUserDashboardPayload, IUserDashboardResponse } from "../types/user.types";
 import axiosInstance from "./axiosInstance";
 
 
@@ -12,5 +13,15 @@ export const loginUserAPI = (payload: ILoginPayload) =>
 export const logoutUserAPI = () =>
   axiosInstance.post<ILogoutResponse>(Routes.USER_LOGOUT).then(res => res.data);
 
-export const getUserDashboardAPI = () =>
-  axiosInstance.get<{message:"success"}>(Routes.USER_DASHBOARD).then(res=>res.data);
+export const getUserDashboardAPI = (getDashboardPayload:GetUserDashboardPayload) =>{     
+   const queryParamsObject: Omit<GetUserDashboardPayload, "search"> | GetUserDashboardPayload =
+    getDashboardPayload.search.length>0
+      ? getDashboardPayload
+      : (({ search, ...rest }) => rest)(getDashboardPayload);
+
+  return axiosInstance
+    .get<IUserDashboardResponse>(Routes.USER_DASHBOARD, {
+      params: queryParamsObject,
+    })
+    .then((res) => res.data);
+}

@@ -1,6 +1,6 @@
 import { AppErrorCodes } from "../../constants/error-codes";
 import { ErrorMessages } from "../../constants/error-messages";
-import { User } from "../../models/user.mode";
+import { User } from "../../models/user.model";
 import { LoginInput } from "../../types/auth.types";
 import AppError from "../../utils/app-error";
 import { comparePasswords } from "../../utils/password-encryption";

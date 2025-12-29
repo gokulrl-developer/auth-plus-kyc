@@ -46,3 +46,4 @@ export interface RegisterErrorType{
 export interface ILogoutResponse{
   message:string
 }
+

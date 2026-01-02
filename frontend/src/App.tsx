@@ -5,11 +5,14 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import PublicRoute from './components/PublicRoute';
-// import Profile from './pages/Profile';
+import Profile from './pages/Profile';
+import { Toaster } from 'sonner';
 
 function App() {
   return (
+    
     <AuthProvider>
+     <Toaster position="top-right" richColors closeButton />
       <Router>
         <Routes>
           <Route path="/login" element={
@@ -30,14 +33,14 @@ function App() {
               </ProtectedRoute>
             }
           /> 
-          {/* <Route
+          <Route
             path="/profile"
             element={
               <ProtectedRoute>
                 <Profile />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

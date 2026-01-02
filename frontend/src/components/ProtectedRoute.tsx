@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
       </div>
     );
   }
-
+  console.log(user)
   if (!user) {
     return <Navigate to="/login" replace />;
   }

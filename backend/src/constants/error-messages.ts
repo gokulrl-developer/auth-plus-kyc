@@ -13,6 +13,11 @@ export const ErrorMessages={
   SESSION_EXPIRED:"Your current session expired.Please login to continue.",
   INTERNAL_SERVER_ERROR:"Internal server error",
   INVALID_INPUT:"Invalid input",
+  NO_FILE:"No file found in the input",
+  FILE_INVALID:"File invalid",
+  IMAGE_KYC_COMPLETED:"Image kyc has been completed already",
+  VIDEO_KYC_COMPLETED:"Video kyc has been completed already",
+  USER_NOT_FOUND:"Account not found",
 }as const;
 
 export type ErrorMessagesType=typeof ErrorMessages[ keyof typeof ErrorMessages]

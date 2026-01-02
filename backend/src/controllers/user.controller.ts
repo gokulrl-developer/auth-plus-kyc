@@ -4,6 +4,9 @@ import { AppErrorCodes } from "../constants/error-codes";
 import AppError from "../utils/app-error";
 import { ErrorMessages } from "../constants/error-messages";
 import { getUserDashboard } from "../services/user-services/user-dashboard.service";
+import { uploadVideo } from "../services/user-services/user-video-upload";
+import { uploadImage } from "../services/user-services/user-image-upload";
+import getUserProfile from "../services/user-services/user-profile.service";
 
 export const getDashboard = async (
   req: Request,
@@ -44,6 +47,65 @@ export const getDashboard = async (
       pageSize,
     });
     res.status(StatusCodes.OK).json({ userList,totalPages });
+  } catch (err) {
+    next(err);
+  }
+};
+export const getProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if(!req.account ||!req.account!.userId){
+      throw new AppError(ErrorMessages.INTERNAL_SERVER_ERROR,AppErrorCodes.INTERNAL_SERVER_ERROR)
+    }
+    const profileData=await getUserProfile({
+      userId:req.account.userId
+    })
+
+    res.status(StatusCodes.OK).json({ message:"profile fetched successfully",profileData });
+  } catch (err) {
+    next(err);
+  }
+};
+export const uploadImageKYC = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if(!req.file){
+      throw new AppError(ErrorMessages.NO_FILE,AppErrorCodes.FILE_NOT_FOUND)
+    }
+    if(!req.account ||!req.account!.userId){
+      throw new AppError(ErrorMessages.INTERNAL_SERVER_ERROR,AppErrorCodes.INTERNAL_SERVER_ERROR)
+    }
+    const imageUrl=  await uploadImage({
+        imageFile:req.file,
+        userId:req.account.userId})
+     res.status(StatusCodes.OK).json({message:"Image uploaded successfully",imageUrl})
+  } catch (err) {
+    next(err);
+  }
+};
+export const uploadVideoKYC = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if(!req.file){
+      throw new AppError(ErrorMessages.NO_FILE,AppErrorCodes.FILE_NOT_FOUND)
+    }
+    if(!req.account || !req.account!.userId){
+      throw new AppError(ErrorMessages.INTERNAL_SERVER_ERROR,AppErrorCodes.INTERNAL_SERVER_ERROR)
+    }
+   const videoUrl= await uploadVideo({
+      videoFile:req.file,
+      userId:req.account.userId
+    })
+    res.status(StatusCodes.OK).json({ message:"video uploaded successfully",videoUrl });
   } catch (err) {
     next(err);
   }

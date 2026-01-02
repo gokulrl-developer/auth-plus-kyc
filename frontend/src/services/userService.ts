@@ -1,6 +1,6 @@
 import { Routes } from "../constants/routes";
 import { ILoginPayload, ILoginResponse, ILogoutResponse, IRegisterPayload, IRegisterResponse } from "../types/auth.types";
-import { GetUserDashboardPayload, IUserDashboardResponse } from "../types/user.types";
+import { GetUserDashboardPayload, IUserDashboardResponse, IUserProfileResponse, UploadImageRequest, UploadImageResponse, UploadVideoRequest, UploadVideoResponse } from "../types/user.types";
 import axiosInstance from "./axiosInstance";
 
 
@@ -23,5 +23,44 @@ export const getUserDashboardAPI = (getDashboardPayload:GetUserDashboardPayload)
     .get<IUserDashboardResponse>(Routes.USER_DASHBOARD, {
       params: queryParamsObject,
     })
+    .then((res) => res.data);
+}
+export const getUserProfileAPI = () =>{     
+  
+  return axiosInstance
+    .get<IUserProfileResponse>(Routes.USER_PROFILE)
+    .then((res) => res.data);
+}
+export const uploadImageAPI = (uploadImageReq:UploadImageRequest) =>{     
+   const formData = new FormData();
+     formData.append("image", uploadImageReq.image);
+
+  return axiosInstance
+    .post<UploadImageResponse>(
+      Routes.UPLOAD_IMAGE,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    )
+    .then((res) => res.data);
+}
+
+export const uploadVideoAPI = (uploadVideoReq:UploadVideoRequest) =>{     
+   const formData = new FormData();
+     formData.append("video", uploadVideoReq.video);
+
+  return axiosInstance
+    .post<UploadVideoResponse>(
+      Routes.UPLOAD_VIDEO,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    )
     .then((res) => res.data);
 }

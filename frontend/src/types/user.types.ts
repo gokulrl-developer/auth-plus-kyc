@@ -14,3 +14,26 @@ export interface GetUserDashboardPayload{
   pageSize:string,
   search:string
 }
+
+export interface UploadImageRequest{
+  image:Blob
+}
+export interface UploadVideoRequest{
+  video:Blob
+}
+
+export interface UploadImageResponse{
+  message:string,
+  imageUrl:string
+}
+export interface UploadVideoResponse{
+  message:string,
+  videoUrl:string
+}
+
+export interface IUserProfileResponse{
+profileData:{
+  imageUrl:string,
+  videoUrl:string
+}
+}

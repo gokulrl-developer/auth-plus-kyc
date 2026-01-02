@@ -51,6 +51,16 @@ const errorToHttpStatus = (code: string): number => {
       return StatusCodes.UNAUTHORIZED;
     case AppErrorCodes.INVALID_INPUT:
       return StatusCodes.BAD_REQUEST;
+    case AppErrorCodes.FILE_INVALID:
+      return StatusCodes.BAD_REQUEST;
+    case AppErrorCodes.FILE_NOT_FOUND:
+      return StatusCodes.BAD_REQUEST
+    case AppErrorCodes.IMAGE_KYC_COMPLETED:
+      return StatusCodes.CONFLICT;
+    case AppErrorCodes.VIDEO_KYC_COMPLETED:
+      return StatusCodes.CONFLICT;
+    case AppErrorCodes.USER_NOT_FOUND:
+      return StatusCodes.NOT_FOUND;
     default:
       return StatusCodes.INTERNAL_SERVER_ERROR;
   }

@@ -5,7 +5,11 @@ import { Camera, Video, X } from "lucide-react";
 import { toast } from "sonner";
 import { KYCMediaMIMETypes } from "../constants/kyc-media-MIMEtypes";
 import { useApiErrorHandler } from "../hooks/useApiErrorHandler";
-import { getUserProfileAPI, uploadImageAPI, uploadVideoAPI } from "../services/userService";
+import {
+  getUserProfileAPI,
+  uploadImageAPI,
+  uploadVideoAPI,
+} from "../services/userService";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -21,11 +25,14 @@ export default function Profile() {
   const videoCaptureTimerId = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
-  const [imageUrl,setImageUrl]=useState<string>("")
-  const [videoUrl,setVideoUrl]=useState<string>("")
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState<string>("");
 
-  const {setUser,removeLocalStorageUser} =useAuth()
-  const {handleApiError}=useApiErrorHandler(setUser,removeLocalStorageUser)
+  const { setUser, removeLocalStorageUser } = useAuth();
+  const { handleApiError } = useApiErrorHandler(
+    setUser,
+    removeLocalStorageUser
+  );
   const VIDEO_KYC_RULES = {
     MIN_SIZE_BYTES: 200 * 1024, // 200 KB
     MAX_SIZE_BYTES: 20 * 1024 * 1024, // 20 MB
@@ -33,14 +40,14 @@ export default function Profile() {
     MAX_DURATION_SEC: 15,
   };
   const IMAGE_KYC_RULES = {
-    MIN_SIZE: 5* 1024, // 5 KB
-    MAX_SIZE: 5 * 1024 * 1024 // 5 MB
+    MIN_SIZE: 5 * 1024, // 5 KB
+    MAX_SIZE: 5 * 1024 * 1024, // 5 MB
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchProfile();
-    console.log(imageUrl)
-  },[])
+    console.log(imageUrl);
+  }, []);
   // handle previewing camera output for image KYC
 
   const startImageStream = async () => {
@@ -97,7 +104,7 @@ export default function Profile() {
     ctx.drawImage(imagePreviewRef.current, 0, 0, canvas.width, canvas.height);
 
     const imageDataUrl = canvas.toDataURL(KYCMediaMIMETypes.IMAGE_MIME_TYPE);
-    const imageBlob=dataURLToBlob(imageDataUrl)
+    const imageBlob = dataURLToBlob(imageDataUrl);
     setImageCaptured(imageBlob);
     stopImageStream();
   };
@@ -105,6 +112,7 @@ export default function Profile() {
   const clearImage = () => {
     setImageCaptured(null);
     stopImageStream();
+    setImageError("");
   };
 
   // handle previewing camera output for video KYC
@@ -212,22 +220,23 @@ export default function Profile() {
   const clearVideo = async () => {
     setCapturedVideoBlob(null);
     startVideoStream();
+    setVideoError("");
   };
 
   const validateVideo = () => {
     let validationErrors = "";
 
     if (capturedVideoBlob!.size < VIDEO_KYC_RULES.MIN_SIZE_BYTES) {
-      validationErrors+="Video must of atleast 200 KB size"
+      validationErrors += "Video must of atleast 200 KB size";
     }
 
     if (capturedVideoBlob!.size > VIDEO_KYC_RULES.MAX_SIZE_BYTES) {
-     validationErrors+="Maximum video size is 20 MB."
+      validationErrors += "Maximum video size is 20 MB.";
     }
-    if(validationErrors.length>0){
+    if (validationErrors.length > 0) {
       setVideoError(validationErrors);
       return false;
-    }else{
+    } else {
       return true;
     }
   };
@@ -235,92 +244,96 @@ export default function Profile() {
     let validationErrors = "";
 
     if (imageCaptured!.size < IMAGE_KYC_RULES.MIN_SIZE) {
-      validationErrors+="Min: image size allowed is 5 KB"
+      validationErrors += "Min: image size allowed is 5 KB";
     }
 
     if (imageCaptured!.size > IMAGE_KYC_RULES.MAX_SIZE) {
-     validationErrors+="Maximum image size is 5 MB."
+      validationErrors += "Maximum image size is 5 MB.";
     }
-    if(validationErrors.length>0){
-    setImageError(validationErrors);
-    return false;
-    }else{
+    if (validationErrors.length > 0) {
+      setImageError(validationErrors);
+      return false;
+    } else {
       return true;
     }
   };
 
-  const handleImageUpload=async ()=>{
-    try{
+  const handleImageUpload = async () => {
+    try {
       setImageError("");
-      const isValid=validateImage();
-       if(isValid===false){
-        return ;
-       }
-      const imageUploadResult=await uploadImageAPI({image:imageCaptured!})
-      if(imageUploadResult.imageUrl){
-        setImageUrl(imageUploadResult.imageUrl);
+      const isValid = validateImage();
+      if (isValid === false) {
+        return;
       }
-      setImageCaptured(null)
-    }catch(error){
-      console.log(error)
+      const imageUploadResult = await uploadImageAPI({ image: imageCaptured! });
+      if (imageUploadResult.imageUrl) {
+        setImageUrl(imageUploadResult.imageUrl);
+        toast.success(imageUploadResult.message || "Upload successful");
+      }
+      setImageCaptured(null);
+    } catch (error) {
+      console.log(error);
       handleApiError(error);
     }
-  }
+  };
 
-  const handleVideoUpload=async ()=>{
-    try{
+  const handleVideoUpload = async () => {
+    try {
       setVideoError("");
-      const isValid=validateVideo();
-  if(isValid===false){
-        return ;
-       }
-      const videoUploadResult=await uploadVideoAPI({video:capturedVideoBlob!})
-      if(videoUploadResult.videoUrl){
-        setVideoUrl(videoUploadResult.videoUrl)
+      const isValid = validateVideo();
+      if (isValid === false) {
+        return;
+      }
+      const videoUploadResult = await uploadVideoAPI({
+        video: capturedVideoBlob!,
+      });
+      if (videoUploadResult.videoUrl) {
+        setVideoUrl(videoUploadResult.videoUrl);
+        toast.success(videoUploadResult.message || "Upload successful");
       }
       setCapturedVideoBlob(null);
-    }catch(error){
-        console.log(error);
-        handleApiError(error)
+    } catch (error) {
+      console.log(error);
+      handleApiError(error);
     }
-  }
+  };
   function dataURLToBlob(dataURL: string): Blob {
-  const [header, base64Data] = dataURL.split(",");
+    const [header, base64Data] = dataURL.split(",");
 
-  if (!header || !base64Data) {
-    throw new Error("Invalid image data URL");
+    if (!header || !base64Data) {
+      throw new Error("Invalid image data URL");
+    }
+
+    const mimeMatch = header.match(/data:(.*?);base64/);
+    if (!mimeMatch) {
+      throw new Error("Invalid image MIME type");
+    }
+
+    const mimeType = mimeMatch[1];
+
+    const binary = atob(base64Data);
+    const len = binary.length;
+    const bytes = new Uint8Array(len);
+
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+
+    return new Blob([bytes], { type: mimeType });
   }
 
-  const mimeMatch = header.match(/data:(.*?);base64/);
-  if (!mimeMatch) {
-    throw new Error("Invalid image MIME type");
-  }
-
-  const mimeType = mimeMatch[1];
-
-  const binary = atob(base64Data);
-  const len = binary.length;
-  const bytes = new Uint8Array(len);
-
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-
-  return new Blob([bytes], { type: mimeType });
-}
-
-  async function fetchProfile(){
-    try{
-     const profileResult=await getUserProfileAPI();
-     if(profileResult.profileData.imageUrl){
-      setImageUrl(profileResult.profileData.imageUrl)
-     }
-     if(profileResult.profileData.videoUrl){
-      setVideoUrl(profileResult.profileData.videoUrl)
-     }
-    }catch(error){
-      console.log("error fetching profile",error);
-      handleApiError(error)
+  async function fetchProfile() {
+    try {
+      const profileResult = await getUserProfileAPI();
+      if (profileResult.profileData.imageUrl) {
+        setImageUrl(profileResult.profileData.imageUrl);
+      }
+      if (profileResult.profileData.videoUrl) {
+        setVideoUrl(profileResult.profileData.videoUrl);
+      }
+    } catch (error) {
+      console.log("error fetching profile", error);
+      handleApiError(error);
     }
   }
   return (
@@ -343,17 +356,6 @@ export default function Profile() {
             KYC Verification
           </h2>
 
-          {imageError && (
-            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm mb-6">
-              {imageError}
-            </div>
-          )}
-          {videoError && (
-            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm mb-6">
-              {videoError}
-            </div>
-          )}
-
           <div className="grid md:grid-cols-2 gap-6">
             {/*  Image KYC */}
             <div className="space-y-4">
@@ -365,17 +367,22 @@ export default function Profile() {
                 Capture a live photo using your camera for identity
                 verification.
               </p>
+              {imageError && (
+                <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm mb-6">
+                  {imageError}
+                </div>
+              )}
 
-                   {imageUrl.length>0 && !imageStream && !imageCaptured &&(
+              {imageUrl.length > 0 && !imageStream && !imageCaptured && (
                 <div className="space-y-4">
-                  <h1>Image submitted:</h1>
+                  <h1 className="text-white text-md">Image submitted:</h1>
                   <img
                     src={imageUrl}
                     alt="Captured"
                     className="w-full rounded-lg border border-white/20"
                   />
                 </div>
-                   )}
+              )}
 
               {!imageStream && (
                 <button
@@ -449,8 +456,14 @@ export default function Profile() {
               <p className="text-gray-400 text-sm">
                 Record a short video clip using your camera and microphone.
               </p>
-               {videoUrl && !videoStream && !capturedVideoBlob && (
+              {videoError && (
+                <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm mb-6">
+                  {videoError}
+                </div>
+              )}
+              {videoUrl && !videoStream && !capturedVideoBlob && (
                 <div className="space-y-4">
+                  <h1 className="text-white text-md">Video submitted:</h1>
                   <video
                     src={videoUrl}
                     controls
